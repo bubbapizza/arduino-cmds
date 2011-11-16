@@ -1,0 +1,61 @@
+This is hopefully going to be an autotools package for a command that
+automates the building of arduino libraries.
+
+It should do something like run a command that can do things like:
+
+   libarduino --build --mcu=atmega328p --Mhz=16
+   libarduino --build --board-name=uno 
+   libarduino --list-names
+
+The latter should list the names of the arduinos in the build.txt file
+showing the names and descriptions of the boards like so: 
+
+ uno        : Arduino Uno
+ atmega328  : Arduino Duemilanove or Nano w/ ATmega328
+ diecimila  : Arduino Diecimila, Duemilanove, or Nano w/ ATmega168
+ mega2560   : Arduino Mega 2560
+ mega       : Arduino Mega (ATmega1280)
+ mini       : Arduino Mini
+ fio        : Arduino Fio
+ bt328      : Arduino BT w/ ATmega328
+ bt         : Arduino BT w/ ATmega168
+ lilypad328 : LilyPad Arduino w/ ATmega328
+ lilypad    : LilyPad Arduino w/ ATmega168
+ pro5v328   : Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega328
+ pro5v      : Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega168
+ pro328     : Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega328
+ pro        : Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega168
+ atmega168  : Arduino NG or older w/ ATmega168
+ atmega8    : Arduino NG or older w/ ATmega8
+
+By default the command will put the .a files in the directory
+~/libarduino/arduino-<version>-<name>.  For example:
+
+   libarduino --build --board-name=pro328
+   ls ~/libarduino/arduino-0022-pro328
+
+The names and corresponding mcu and Mhz settings should come from a 
+config file in etc/libarduino.conf for further customization.
+
+==== future ====
+
+Add a command that lets you compile and upload  pde files straight away 
+without any bullshit.  You should be able to do a command like:
+
+   arduino --run blink.pde
+
+from no matter where you are and it will autocompile and upload the 
+program to your board.  Other options could be:
+
+   arduino --compile blink.pde [--output=filename]
+   arduino --upload blink.hex [--tty=/dev/ttyABC123]
+
+
+To do this, there should be an etc/arduino.conf file to find out what 
+board name to use.  During autocompilation, it should grep the pde file 
+for include statements and automatically select the right libraries 
+to link against.  The list of available libraries and corresponding 
+include files to grep for would be in etc/libarduino.conf.
+
+All compilation would use a build directory under ~/.libarduino.
+
