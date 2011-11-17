@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# This script is used for building libarduino.a from the arduino web site.
+# It will download the code, extract it and make it.
+#
+# Shawn Wilson <shawn@ch2a.ca>
+# 
+
+
+# Check to see if we can use the built-in distro copy of arduino.
+grep --silent -i -e "11.10" -e "11.04" /etc/lsb-release
+ARDUINO_PACKAGE=$?
+
+
+echo "Getting arduino source code and installing compile tools..."
+echo
+
+# If there's no built-in arduino package, download from source.
+if [ $ARDUINO_PACKAGE -eq 1 ] ; then
+   # 32-bit
+   PKGNAME=arduino-0022  
+   # 64-bit
+   #PKGNAME=arduino-0022-64-2
+
+   PKG_DIR=./${PKGNAME}
+   PKG_URL="http://arduino.googlecode.com/files/${PKGNAME}.tgz"
+
+   # Download arduino sources from the web.
+   wget $PKG_URL
+   tar zxvf ${PKGNAME}.tgz
+   sudo apt-get -y install gcc-avr avr-libc avrdude
+else
+   PKG_DIR=/usr/share/arduino
+   sudo apt-get -y install arduino gcc-avr
+fi
+
+# Set the arduino source and destination locations.
+ARDUINO_FILES="${PKG_DIR}/hardware/arduino/cores/arduino"
+ARDUINO_LIBDIR=./libarduino
+
+# Copy over the source.
+find ${ARDUINO_FILES} ! -name Makefile -exec cp {} $ARDUINO_LIBDIR \;
+
+# Cleanup for sources downloaded by hand.
+if [ $ARDUINO_PACKAGE -eq 1 ] ; then
+   echo "Cleaning up downloaded files..."
+   rm -Rf $PKG_DIR ${PKGNAME}.tgz
+fi
+
+
+######### Make the library ########
+
+echo "Making libarduino..."
+make -C $ARDUINO_LIBDIR
+
+
+# Check to make sure it finished successfully.
+if [ -f ${ARDUINO_LIBDIR}/libarduino.a ];
+then
+   echo
+   echo "Success!!"
+   echo
+else
+   echo  
+   echo "Something broke - cannot find libarduino/libarduino.a."
+   echo
+fi
