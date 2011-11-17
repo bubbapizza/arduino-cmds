@@ -16,7 +16,7 @@ CXXFLAGS := -Wall -Os
 CXXFLAGS += -mmcu=atmega328p -DF_CPU=16000000  # Arduino Uno
 CXXFLAGS += $(INC_DIRS)
  
-LIBDIR=/home/shawn/.arduino/lib
+LIBDIR=../lib
 
 
 ######################

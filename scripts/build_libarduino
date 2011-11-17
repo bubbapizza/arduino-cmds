@@ -22,13 +22,17 @@
 # It will download the code, extract it and make all the libraries.
 # 
 
-prefix=${HOME}
-exec_prefix=${HOME}
-libdir=${exec_prefix}/.libarduino/lib
-localstatedir=${prefix}/.libarduino/build
+prefix=`pwd`/test
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+localstatedir=${prefix}/build
 datarootdir=../
 datadir=${datarootdir}/data
-srcdir=${prefix}/.libarduino/src
+srcdir=${prefix}/src
+
+# Create the working directories if necessary.
+mkdir -p $libdir $localstatedir $srcdir
+
 
 
 ########## Set up arduino sources ############
@@ -73,10 +77,11 @@ fi
 ######## Set up the build directory #########
 
 # Create links to the files in the source directory.
-ln -s ${srcdir}/hardware/arduino/cores/* $localstatedir 
+ln -s ${srcdir}/hardware/arduino/cores/arduino/* $localstatedir 
 
 # Copy over the custom make file.
-cp ${datadir}/Makefile.libarduino $localstatedir
+rm $localstatedir/Makefile
+cp ${datadir}/Makefile.libarduino $localstatedir/Makefile
 
 
 
@@ -95,10 +100,10 @@ then
    echo
    echo "Success!!"
    echo
-   exit(0)
+   exit 0
 else
    echo  
    echo "Something broke - cannot find libarduino/libarduino.a."
    echo
-   exit(1)
+   exit 1
 fi
