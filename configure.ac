@@ -1,0 +1,5 @@
+AC_INIT(libarduino, 0.1)
+AM_INIT_AUTOMAKE
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+
