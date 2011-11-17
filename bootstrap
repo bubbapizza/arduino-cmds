@@ -1,3 +1,9 @@
+#!/bin/sh
+#
+# This file is used by developers to build the ./configure file.  It does
+# not get distributed with the tarball that users use for installing.
+#
+
 aclocal
 automake --add-missing --copy
 autoconf
