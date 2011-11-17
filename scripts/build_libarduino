@@ -19,65 +19,86 @@
 
 #
 # This script is used for building libarduino.a from the arduino web site.
-# It will download the code, extract it and make it.
+# It will download the code, extract it and make all the libraries.
 # 
 
+prefix=${HOME}
+exec_prefix=${HOME}
+libdir=${exec_prefix}/.libarduino/lib
+localstatedir=${prefix}/.libarduino/build
+datarootdir=../
+datadir=${datarootdir}/data
+srcdir=${prefix}/.libarduino/src
+
+
+########## Set up arduino sources ############
 
 # Check to see if we can use the built-in distro copy of arduino.
-grep --silent -i -e "11.10" -e "11.04" /etc/lsb-release
+grep --silent -i -e "Ubuntu 11.10" -e "Ubuntu 11.04" /etc/lsb-release
 ARDUINO_PACKAGE=$?
-
 
 echo "Getting arduino source code and installing compile tools..."
 echo
 
 # If there's no built-in arduino package, download from source.
 if [ $ARDUINO_PACKAGE -eq 1 ] ; then
-   # 32-bit
-   PKGNAME=arduino-0022  
-   # 64-bit
-   #PKGNAME=arduino-0022-64-2
 
-   PKG_DIR=./${PKGNAME}
+   # Check for 64 or 32 bit
+   if [ `uname -m` == "x86_64" ] ; then
+      PKGNAME="arduino-0022-64-2"
+   else
+      PKGNAME="arduino-0022"  
+   fi
    PKG_URL="http://arduino.googlecode.com/files/${PKGNAME}.tgz"
 
-   # Download arduino sources from the web.
+   # Download arduino sources from the web and put them in the src
+   # direcory.
+   cd /tmp
    wget $PKG_URL
    tar zxvf ${PKGNAME}.tgz
-   sudo apt-get -y install gcc-avr avr-libc avrdude
+   mv ${PKGNAME}/* $srcdir
+
+
 else
-   PKG_DIR=/usr/share/arduino
-   sudo apt-get -y install arduino gcc-avr
-fi
+   echo "Installing the arduino package..."
+   sudo apt-get -y install arduino
 
-# Set the arduino source and destination locations.
-ARDUINO_FILES="${PKG_DIR}/hardware/arduino/cores/arduino"
-ARDUINO_LIBDIR=./libarduino
-
-# Copy over the source.
-find ${ARDUINO_FILES} ! -name Makefile -exec cp {} $ARDUINO_LIBDIR \;
-
-# Cleanup for sources downloaded by hand.
-if [ $ARDUINO_PACKAGE -eq 1 ] ; then
-   echo "Cleaning up downloaded files..."
-   rm -Rf $PKG_DIR ${PKGNAME}.tgz
+   # Since the package is already installed, we just point to the
+   # shared data with symbolic links.
+   ln -s /usr/share/arduino/* $srcdir 
 fi
 
 
-######### Make the library ########
+
+######## Set up the build directory #########
+
+# Create links to the files in the source directory.
+ln -s ${srcdir}/hardware/arduino/cores/* $localstatedir 
+
+# Copy over the custom make file.
+cp ${datadir}/Makefile.libarduino $localstatedir
+
+
+
+######### Make the libraries ########
+
+echo "Installing gcc-avr, avr-libc and avrdude if necessary..."
+sudo apt-get -y install gcc-avr avr-libc avrdude
 
 echo "Making libarduino..."
-make -C $ARDUINO_LIBDIR
+make -C $localstatedir
 
 
 # Check to make sure it finished successfully.
-if [ -f ${ARDUINO_LIBDIR}/libarduino.a ];
+if [ -f ${libdir}/libarduino.a ];
 then
    echo
    echo "Success!!"
    echo
+   exit(0)
 else
    echo  
    echo "Something broke - cannot find libarduino/libarduino.a."
    echo
+   exit(1)
 fi
