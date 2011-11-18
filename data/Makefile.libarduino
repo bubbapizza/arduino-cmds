@@ -1,69 +1,44 @@
-######################
-# Compiler settings
-######################
+#
+# Here's the library we're compiling.  By default, we build the arduino 
+# library.  To build the other arduino libraries, we need to override 
+# LIB, HDR, C_SRC and CPP_SRC.
+#
+LIBDIR=../lib
+LIB=arduino
 
+# Set compiler settings.
 CC=avr-gcc
 CXX=avr-g++
 AR=avr-ar
- 
+MMCU=atmega328p
+MHZ=16
+
+
 INC_DIRS := -I .
  
 CFLAGS  := -Wall -Os
-CFLAGS += -mmcu=atmega328p -DF_CPU=16000000   # Arduino Uno
+CFLAGS += -mmcu=$(MMCU) -DF_CPU=$(MHZ)000000   # Arduino Uno
 CFLAGS  += $(INC_DIRS)
  
 CXXFLAGS := -Wall -Os
-CXXFLAGS += -mmcu=atmega328p -DF_CPU=16000000  # Arduino Uno
+CXXFLAGS += -mmcu=$(MMCU) -DF_CPU=$(MHZ)000000   # Arduino Uno
 CXXFLAGS += $(INC_DIRS)
  
-LIBDIR=../lib
 
-
-######################
-# Main library
-######################
-
+# Set the source files.
 HDR     := binary.h HardwareSerial.h pins_arduino.h Print.h Stream.h WConstants.h wiring.h wiring_private.h WProgram.h WString.h
 C_SRC   := pins_arduino.c wiring_analog.c wiring_digital.c wiring_shift.c wiring.c wiring_pulse.c WInterrupts.c
 CPP_SRC := HardwareSerial.cpp Tone.cpp WString.cpp  Print.cpp  WMath.cpp
 OBJ := $(C_SRC:.c=.o) $(CPP_SRC:.cpp=.o)
 
-arduino: $(OBJ) $(C_SRC) $(CPP_SRC) $(HDR)
-	$(AR) rcs $(LIBDIR)/libarduino.a $(OBJ)
+
+# Build the library.
+$(LIB): $(OBJ) $(C_SRC) $(CPP_SRC) $(HDR)
+	$(AR) rcs $(LIBDIR)/lib$(LIB).a $(OBJ)
 
 
-######################
-# Optional libraries
-######################
-
-### Stepper ###
-STEP_HDR := Stepper/Stepper.h
-STEP_CPP_SRC := Stepper/Stepper.cpp 
-STEP_OBJ := $(STEP_CPP_SRC:.cpp=.o)
-
-stepper: $(STEP_OBJ) $(STEP_CPP_SRC) $(STEP_HDR)
-	$(AR) rcs $(LIBDIR)/libstepper.a $(STEP_OBJ)
-
-
-### Firmata ###
-FIRM_HDR := Firmata/Boards.h Firmata/Firmata.h
-FIRM_CPP_SRC := Firmata/Firmata.cpp
-FIRM_OBJ := $(FIRM_CPP_SRC:.cpp=.o)
-
-firmata: $(FIRM_OBJ) $(FIRM_CPP_SRC) $(FIRM_HDR)
-	$(AR) rcs $(LIBDIR)/libfirmata.a $(FIRM_OBJ)
-
-
-
-######################
-# Main Targets
-######################
-
-all: arduino stepper firmata
+all: $(LIB)
  
-cloc:
-	@cloc ./*
-
 clean:
 	@rm -rfv *.o
 	@rm -rfv *.a
