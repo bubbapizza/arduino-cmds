@@ -26,7 +26,7 @@ prefix=`pwd`/test
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 localstatedir=${prefix}/build
-datarootdir=../
+datarootdir=..
 datadir=${datarootdir}/data
 srcdir=${prefix}/src
 
@@ -57,10 +57,12 @@ if [ $ARDUINO_PACKAGE -eq 1 ] ; then
 
    # Download arduino sources from the web and put them in the src
    # direcory.
+   CURDIR=`pwd`
    cd /tmp
-   wget $PKG_URL
+   # wget $PKG_URL
    tar zxvf ${PKGNAME}.tgz
    mv ${PKGNAME}/* $srcdir
+   cd $CURDIR
 
 
 else
@@ -81,7 +83,7 @@ ln -s ${srcdir}/hardware/arduino/cores/arduino/* $localstatedir
 
 # Copy over the custom make file.
 rm $localstatedir/Makefile
-cp ${datadir}/Makefile.libarduino $localstatedir/Makefile
+cp ${datadir}/Makefile.lib $localstatedir/Makefile
 
 
 
