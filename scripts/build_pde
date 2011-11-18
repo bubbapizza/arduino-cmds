@@ -1,0 +1,64 @@
+#!/bin/sh
+#
+#        Copyright (C) 2011 Shawn Wilson
+#        shawn@ch2a.ca
+#        
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
+# This script is used for building libarduino.a from the arduino web site.
+# It will download the code, extract it and make all the libraries.
+# 
+
+prefix=`pwd`/test
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+localstatedir=${prefix}/build
+datarootdir=..
+datadir=${datarootdir}/data
+srcdir=${prefix}/src
+
+# PARAMETERS
+PDE_FILE=$1
+
+
+# Create the working directories if necessary.
+mkdir -p $libdir $localstatedir $srcdir
+
+
+
+
+######### Make the program ########
+
+echo "Installing gcc-avr, avr-libc and avrdude if necessary..."
+sudo apt-get -y install gcc-avr avr-libc avrdude
+
+echo "Making libarduino..."
+make -C $localstatedir
+
+
+# Check to make sure it finished successfully.
+if [ -f ${libdir}/libarduino.a ];
+then
+   echo
+   echo "Success!!"
+   echo
+   exit 0
+else
+   echo  
+   echo "Something broke - cannot find libarduino/libarduino.a."
+   echo
+   exit 1
+fi
