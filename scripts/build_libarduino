@@ -28,7 +28,7 @@ libdir=${exec_prefix}/lib
 localstatedir=${prefix}/build
 datarootdir=..
 datadir=${datarootdir}/data
-srcdir=${prefix}/src
+srcdir=${prefix}/src/libarduino
 
 # Create the working directories if necessary.
 mkdir -p $libdir $localstatedir $srcdir

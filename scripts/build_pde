@@ -22,35 +22,81 @@
 # It will download the code, extract it and make all the libraries.
 # 
 
+# PARAMETERS
+PDE_FILE=$1
+PROGRAM=${PDE_FILE%.pde}
+
+# Set up file paths.
 prefix=`pwd`/test
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
-localstatedir=${prefix}/build
+localstatedir=${prefix}/build/${PROGRAM}
 datarootdir=..
 datadir=${datarootdir}/data
-srcdir=${prefix}/src
-
-# PARAMETERS
-PDE_FILE=$1
+srcdir=${prefix}/src/${PROGRAM}
 
 
-# Create the working directories if necessary.
-mkdir -p $libdir $localstatedir $srcdir
+########
+# functions
+########
+
+# This figures out the absolute path of any give path.
+abspath () {
+   dir=$1
+
+   # Basically, if the path begins with a '/', it's absolute.  Otherwise,
+   # it's relative so tack on the pwd results.
+   case $dir in
+      /*) echo $1 ;;
+      *) echo `pwd`/$1 ;;
+   esac
+} /* abspath */
 
 
+# This function pulls out all the relative headers in a c/c++/pde file.
+relhdrs () {
+   srcfile=$1
+
+   grep "^#include" $srcfile | cut -d\" -f2 -s
+} /* relhdrs */
+
+
+
+#######
+# main section
+#######
+
+##### Set up the program sources #####
+
+# Make the source directory and add a symlink to the pde file.
+mkdir -p ${srcdir}
+cp ${datadir}/main.c ${srcdir}
+ln -s `abspath $PDE_FILE` ${srcdir}/arduino_program.pde
+
+# Scan the pde file for relative headers and make symlinks
+# to the files in the src directory so it compiles properly.
+for file in `relhdrs $PDE_FILE` ; do 
+   ln -s `abspath $file` ${srcdir}
+done
+
+
+##### Set up the build directory #####
+
+# Create links to the files in the source directory.
+ln -s ${srcdir}/* $localstatedir
+
+# Copy over the custom make file.
+cp ${datadir}/Makefile.pde ${localstatedir}/Makefile
 
 
 ######### Make the program ########
 
-echo "Installing gcc-avr, avr-libc and avrdude if necessary..."
-sudo apt-get -y install gcc-avr avr-libc avrdude
-
-echo "Making libarduino..."
+echo "Cross compiling..."
 make -C $localstatedir
 
 
 # Check to make sure it finished successfully.
-if [ -f ${libdir}/libarduino.a ];
+if [ -f ${localstatedir}/arduino_program.hex ];
 then
    echo
    echo "Success!!"
@@ -58,7 +104,7 @@ then
    exit 0
 else
    echo  
-   echo "Something broke - cannot find libarduino/libarduino.a."
+   echo "Something broke - cannot find ${localstatedir}/arduino_program.hex."
    echo
    exit 1
 fi
