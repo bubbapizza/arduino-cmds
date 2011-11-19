@@ -1,8 +1,8 @@
 # This is the name of the program we're building and the location of
 # the arduino library.
 PROGNAME=arduino_program
-LIBDIR=../libarduino 
-INCDIR=../libarduino
+LIBDIR=../../lib
+INCDIR=../../src/libarduino
 LIBS=-larduino
 
 # Set hardware specific parameters.

@@ -25,7 +25,7 @@
 prefix=`pwd`/test
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
-localstatedir=${prefix}/build
+localstatedir=${prefix}/build/libarduino
 datarootdir=..
 datadir=${datarootdir}/data
 srcdir=${prefix}/src/libarduino
@@ -59,7 +59,9 @@ if [ $ARDUINO_PACKAGE -eq 1 ] ; then
    # direcory.
    CURDIR=`pwd`
    cd /tmp
-   # wget $PKG_URL
+   if [ ! -e ${PKG_NAME}.tgz ] ; then
+      wget $PKG_URL
+   fi
    tar zxvf ${PKGNAME}.tgz
    mv ${PKGNAME}/* $srcdir
    cd $CURDIR

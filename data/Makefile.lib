@@ -3,7 +3,7 @@
 # library.  To build the other arduino libraries, we need to override 
 # LIB, HDR, C_SRC and CPP_SRC.
 #
-LIBDIR=../lib
+LIBDIR=../../lib
 LIB=arduino
 
 # Set compiler settings.
