@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# This holds a bunch of functions used by the build routines and all the
+# default directory locations.
+#
+
+# These should be the default directories where the libarduino
+# package will get installed to.  The paths here need to be turned
+# into autotools paths.
+#
+#prefix=/usr/local
+#exec_prefix=${prefix}
+#libdir=${exec_prefix}/lib
+#localstatedir=${prefix}/var/lib/libarduino
+#datarootdir=${prefix}/share/libarduino
+#datadir=${datarootdir}/libarduino
+
+
+datarootdir=../data
+exec_prefix=${prefix}
+libdir=../lib
+localstatedir=./test
+datarootdir=../data
+datadir=${datarootdir}
+
+# Set up file paths for building arduino libs and apps.
+arduino_prefix=${localstatedir}
+arduino_libdir=${arduino_prefix}/lib
+arduino_includedir=${arduino_prefix}/include
+arduino_localstatedir=${arduino_prefix}/build/libarduino
+arduino_srcdir=${arduino_prefix}/src/libarduino
+
+
+#
+# This figures out the absolute path of any give path.
+#
+abspath () {
+   dir=$1
+
+   # Basically, if the path begins with a '/', it's absolute.  Otherwise,
+   # it's relative so tack on the pwd results.
+   case $dir in
+      /*) echo $1 ;;
+      *) echo `pwd`/$1 ;;
+   esac
+} # abspath
+
+
+#
+# This function pulls out all the relative headers in a c/c++/pde file.
+#
+relhdrs () {
+   srcfile=$1
+
+   grep "^#include" $srcfile | cut -d\" -f2 -s
+} # relhdrs
+

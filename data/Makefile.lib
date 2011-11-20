@@ -4,6 +4,7 @@
 # LIB, HDR, C_SRC and CPP_SRC.
 #
 LIBDIR=../../lib
+INCDIR=../../include
 LIB=arduino
 
 # Set compiler settings.
@@ -14,11 +15,9 @@ MMCU=atmega328p
 MHZ=16
 
 
-INC_DIRS := -I .
- 
 CFLAGS  := -Wall -Os
 CFLAGS += -mmcu=$(MMCU) -DF_CPU=$(MHZ)000000   # Arduino Uno
-CFLAGS  += $(INC_DIRS)
+CFLAGS  += -I $(INCDIR)
  
 CXXFLAGS := -Wall -Os
 CXXFLAGS += -mmcu=$(MMCU) -DF_CPU=$(MHZ)000000   # Arduino Uno

@@ -22,16 +22,15 @@
 # It will download the code, extract it and make all the libraries.
 # 
 
-prefix=`pwd`/test
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-localstatedir=${prefix}/build/libarduino
-datarootdir=..
-datadir=${datarootdir}/data
-srcdir=${prefix}/src/libarduino
+
+# Include useful functions and all directory paths.
+prefix=.
+. ../data/init-functions
+
 
 # Create the working directories if necessary.
-mkdir -p $libdir $localstatedir $srcdir
+mkdir -p $arduino_libdir $arduino_localstatedir \
+   $arduino_srcdir $arduino_includedir
 
 
 
@@ -48,23 +47,30 @@ echo
 if [ $ARDUINO_PACKAGE -eq 1 ] ; then
 
    # Check for 64 or 32 bit
-   if [ `uname -m` == "x86_64" ] ; then
+   if [ `uname -m` = "x86_64" ] ; then
       PKGNAME="arduino-0022-64-2"
    else
       PKGNAME="arduino-0022"  
    fi
    PKG_URL="http://arduino.googlecode.com/files/${PKGNAME}.tgz"
 
-   # Download arduino sources from the web and put them in the src
-   # direcory.
+
+   #
+   # Put the arduino sources in the source directory.
+   #
    CURDIR=`pwd`
    cd /tmp
-   if [ ! -e ${PKG_NAME}.tgz ] ; then
+
+   # Download arduino sources from the web and put them in the src
+   # direcory.
+   if [ ! -e /tmp/${PKGNAME}.tgz ] ; then
       wget $PKG_URL
+      tar zxvf ${PKGNAME}.tgz
    fi
-   tar zxvf ${PKGNAME}.tgz
-   mv ${PKGNAME}/* $srcdir
+
+   mv ${PKGNAME}/* $arduino_srcdir
    cd $CURDIR
+   exit 0
 
 
 else
@@ -73,7 +79,7 @@ else
 
    # Since the package is already installed, we just point to the
    # shared data with symbolic links.
-   ln -s /usr/share/arduino/* $srcdir 
+   ln -s /usr/share/arduino/* $arduino_srcdir 
 fi
 
 
@@ -81,11 +87,14 @@ fi
 ######## Set up the build directory #########
 
 # Create links to the files in the source directory.
-ln -s ${srcdir}/hardware/arduino/cores/arduino/* $localstatedir 
+ln -s ${arduino_srcdir}/hardware/arduino/cores/arduino/* \
+   $arduino_localstatedir 
+ln -s ${arduino_srcdir}/hardware/arduino/cores/arduino/*.h \
+   $arduino_includedir 
 
 # Copy over the custom make file.
-rm $localstatedir/Makefile
-cp ${datadir}/Makefile.lib $localstatedir/Makefile
+rm $arduino_localstatedir/Makefile
+cp ${datadir}/Makefile.lib $arduino_localstatedir/Makefile
 
 
 
@@ -95,11 +104,11 @@ echo "Installing gcc-avr, avr-libc and avrdude if necessary..."
 sudo apt-get -y install gcc-avr avr-libc avrdude
 
 echo "Making libarduino..."
-make -C $localstatedir
+make -C $arduino_localstatedir
 
 
 # Check to make sure it finished successfully.
-if [ -f ${libdir}/libarduino.a ];
+if [ -f ${arduino_libdir}/libarduino.a ];
 then
    echo
    echo "Success!!"
