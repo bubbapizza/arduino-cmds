@@ -17,10 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-#
-# This script is used for building libarduino.a from the arduino web site.
-# It will download the code, extract it and make all the libraries.
-# 
+# This script will compile a pde file using the arduino libraries.
+# It automatically creates a build environment and chooses the right
+# include files and libraries.
 
 # PARAMETERS
 PDE_FILE=$1
@@ -34,41 +33,17 @@ if [ "${PROGRAM}" = "" ] ; then
    exit 1
 fi
 
-# These should be the default directories where the libarduino
-# package will get installed to.  The paths here need to be turned
-# into autotools paths.
-#
-#prefix=/usr/local
-#exec_prefix=${prefix}
-#libdir=${exec_prefix}/lib
-#localstatedir=${prefix}/var/lib/libarduino
-#datarootdir=${prefix}/share/libarduino
-#datadir=${datarootdir}/libarduino
-
+# Include some useful functions and all directory paths.
 prefix=.
-exec_prefix=${prefix}
-libdir=../lib
-localstatedir=./test
-datarootdir=../data
-datadir=${datarootdir}
-
-# Set up file paths for building arduino libs and apps.
-arduino_prefix=${localstatedir}
-arduino_libdir=${arduino_prefix}/lib
-arduino_includedir=${arduinoprefix}/include
-arduino_localstatedir=${arduino_prefix}/build/${PROGRAM}
-arduino_srcdir=${arduino_prefix}/src/${PROGRAM}
-
-
-# Include some useful functions.
 . ${libdir}/init-functions
+
 
 
 #######
 # main section
 #######
 
-##### Set up the program sources #####
+##### Set up the program sources for compiling #####
 
 # Make the source directory and add a symlink to the pde file.
 mkdir -p $arduino_srcdir
@@ -77,29 +52,22 @@ ln -f -s `abspath $PDE_FILE` ${arduino_srcdir}/arduino_program.pde
 
 # Scan the pde file for relative headers and make symlinks
 # to the files in the src directory so it compiles properly.
-#for file in `relhdrs $PDE_FILE` ; do 
-#   ln -s `abspath $file` ${srcdir}
-#done
-
-
-##### Set up the build directory #####
-
-# Create links to the files in the source directory.
-mkdir -p $arduino_localstatedir
-ln -f -s ${arduinoo_srcdir}/* $arduino_localstatedir
+for file in `relhdrs $PDE_FILE` ; do 
+   ln -s `abspath $file` ${arduino_srcdir}/${PROGRAM}
+done
 
 # Copy over the custom make file.
-cp ${datadir}/Makefile.pde ${arduino_localstatedir}/Makefile
+cp ${datadir}/Makefile.pde ${arduino_srcdir}/${PROGRAM}/Makefile
 
 
 ######### Make the program ########
 
 echo "Cross compiling..."
-#make -C $arduino_localstatedir
+#make -C LIBDIR=${arduino_srcdir}/${PROGRAM} INCDIR=${arduino_includedir}
 
 
 # Check to make sure it finished successfully.
-if [ -f ${arduino_localstatedir}/arduino_program.hex ];
+if [ -f ${arduino_srcdir}/${PROGRAM}/arduino_program.hex ];
 then
    echo
    echo "Success!!"

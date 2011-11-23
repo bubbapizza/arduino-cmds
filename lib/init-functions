@@ -19,17 +19,21 @@
 datarootdir=../data
 exec_prefix=${prefix}
 libdir=../lib
-localstatedir=./test
+localstatedir=${prefix}/lib/libarduino
+#localstatedir=${HOME}/.@PKGNAME@
 datarootdir=../data
 datadir=${datarootdir}
 
 # Set up file paths for building arduino libs and apps.
-arduino_prefix=${localstatedir}
+arduino_prefix=./test
+#arduino_prefix=${HOME}/.${PKGNAME}
 arduino_libdir=${arduino_prefix}/lib
 arduino_includedir=${arduino_prefix}/include
-arduino_localstatedir=${arduino_prefix}/build/libarduino
-arduino_srcdir=${arduino_prefix}/src/libarduino
+arduino_localstatedir=${arduino_prefix}/build
+arduino_srcdir=${arduino_prefix}/src
 
+# The arduino source version included with this package
+ARDUINO_VERSION="0022"
 
 #
 # This figures out the absolute path of any give path.

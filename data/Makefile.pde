@@ -2,7 +2,9 @@
 # the arduino library.
 PROGNAME=arduino_program
 LIBDIR=../../lib
-INCDIR=../../src/libarduino
+#LIBDIR=@ARDUINO_LIBDIR@
+INCDIR=../../include
+#INCDIR=@ARDUINO_INCDIR@
 LIBS=-larduino
 
 # Set hardware specific parameters.

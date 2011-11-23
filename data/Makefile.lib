@@ -4,7 +4,9 @@
 # LIB, HDR, C_SRC and CPP_SRC.
 #
 LIBDIR=../../lib
+#LIBDIR=@ARDUINO_LIBDIR@
 INCDIR=../../include
+#INCDIR=@ARDUINO_INCDIR@
 LIB=arduino
 
 # Set compiler settings.

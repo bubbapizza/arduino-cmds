@@ -18,8 +18,8 @@
 #
 
 #
-# This script is used for building libarduino.a from the arduino web site.
-# It will download the code, extract it and make all the libraries.
+# This script is used for building libarduino.a from the arduino source.
+# The arduino source is included with the libarduino package.
 # 
 
 
@@ -40,38 +40,16 @@ mkdir -p $arduino_libdir $arduino_localstatedir \
 grep --silent -i -e "Ubuntu 11.10" -e "Ubuntu 11.04" /etc/lsb-release
 ARDUINO_PACKAGE=$?
 
-echo "Getting arduino source code and installing compile tools..."
+echo "Setting up the arduino source directory..."
 echo
 
-# If there's no built-in arduino package, download from source.
+# If there's no built-in arduino package in this linux distro, then
+# we have to use the one that's included with this package.
 if [ $ARDUINO_PACKAGE -eq 1 ] ; then
 
-   # Check for 64 or 32 bit
-   if [ `uname -m` = "x86_64" ] ; then
-      PKGNAME="arduino-0022-64-2"
-   else
-      PKGNAME="arduino-0022"  
-   fi
-   PKG_URL="http://arduino.googlecode.com/files/${PKGNAME}.tgz"
-
-
-   #
-   # Put the arduino sources in the source directory.
-   #
-   CURDIR=`pwd`
-   cd /tmp
-
-   # Download arduino sources from the web and put them in the src
-   # direcory.
-   if [ ! -e /tmp/${PKGNAME}.tgz ] ; then
-      wget $PKG_URL
-      tar zxvf ${PKGNAME}.tgz
-   fi
-
-   mv ${PKGNAME}/* $arduino_srcdir
-   cd $CURDIR
-   exit 0
-
+   # The arduino sources will have been installed in the data directory
+   # so we just point symlinks to them.
+   ln -s ${datadir}/arduino-${ARDUINO_VERSION} $arduino_srcdir
 
 else
    echo "Installing the arduino package..."
@@ -104,7 +82,7 @@ echo "Installing gcc-avr, avr-libc and avrdude if necessary..."
 sudo apt-get -y install gcc-avr avr-libc avrdude
 
 echo "Making libarduino..."
-make -C $arduino_localstatedir
+make -C LIBDIR=${arduino_localstatedir}
 
 
 # Check to make sure it finished successfully.
