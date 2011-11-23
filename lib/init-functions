@@ -55,9 +55,9 @@ abspath () {
 # This function pulls out all the relative headers in a c/c++/pde file.
 #
 relhdrs () {
-   srcfile=$1
+   srcfiles=$*
 
-   grep "^#include" $srcfile | cut -d\" -f2 -s
+   grep -s "^#include" $srcfiles | cut -d\" -f2 -s | sort -u
 } # relhdrs
 
 
@@ -74,4 +74,3 @@ arduino_srcpath () {
       echo libraries/${libname};
    fi
 } # arduino_libpath
-

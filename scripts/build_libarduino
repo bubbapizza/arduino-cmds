@@ -54,13 +54,13 @@ if [ $ARDUINO_PACKAGE -eq 1 ] ; then
 
    # The arduino sources will have been installed in the data directory
    # so we just point symlinks to them.
-   ln -s ${datadir}/arduino-${ARDUINO_VERSION} ${arduino_srcdir}/arduino
+   ln -s -f ${datadir}/arduino-${ARDUINO_VERSION} ${arduino_srcdir}/arduino
 
 else
 
    # Since the package is already installed, we just point to the
    # shared data with symbolic links.
-   ln -s /usr/share/arduino ${arduino_srcdir}/arduino
+   ln -s -f /usr/share/arduino ${arduino_srcdir}/arduino
 fi
 
 
@@ -77,8 +77,19 @@ cp ${datadir}/Makefile.lib $arduino_localstatedir/${LIBNAME}/Makefile
 
 
 ######## Put headers in the include directory #######
-ln -s ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/*.h \
+ln -s -f ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/*.h \
    $arduino_includedir 
+
+# This is a total hack to get around the fact that sometimes cpp/c/pde
+# files include files locally that are actually arduino library files.
+inc_files=`relhdrs ${arduino_localstatedir}/${LIBNAME}/*.c \
+   ${arduino_localstatedir}/${LIBNAME}/*.cpp \
+   ${arduino_localstatedir}/${LIBNAME}/*.pde` 
+
+for inc_file in $inc_files ; do
+   cp ${arduino_includedir}/${inc_file} \
+      ${arduino_localstatedir}/${LIBNAME}
+done
 
 
 ######### Make the libraries ########
