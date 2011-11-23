@@ -22,14 +22,19 @@
 # The arduino source is included with the libarduino package.
 # 
 
+# PARAMETERS
+LIBNAME=${1:-arduino}
+
 
 # Include useful functions and all directory paths.
 prefix=.
-. ../data/init-functions
+#prefix=@prefix@
+. ../lib/init-functions
+#. @datadir@/@PACKAGE@/init-functions
 
 
 # Create the working directories if necessary.
-mkdir -p $arduino_libdir $arduino_localstatedir \
+mkdir -p $arduino_libdir ${arduino_localstatedir}/${LIBNAME} \
    $arduino_srcdir $arduino_includedir
 
 
@@ -49,44 +54,44 @@ if [ $ARDUINO_PACKAGE -eq 1 ] ; then
 
    # The arduino sources will have been installed in the data directory
    # so we just point symlinks to them.
-   ln -s ${datadir}/arduino-${ARDUINO_VERSION} $arduino_srcdir
+   ln -s ${datadir}/arduino-${ARDUINO_VERSION} ${arduino_srcdir}/arduino
 
 else
-   echo "Installing the arduino package..."
-   sudo apt-get -y install arduino
 
    # Since the package is already installed, we just point to the
    # shared data with symbolic links.
-   ln -s /usr/share/arduino/* $arduino_srcdir 
+   ln -s /usr/share/arduino ${arduino_srcdir}/arduino
 fi
 
 
 
-######## Set up the build directory #########
+######## Set up the build directories #########
 
-# Create links to the files in the source directory.
-ln -s ${arduino_srcdir}/hardware/arduino/cores/arduino/* \
-   $arduino_localstatedir 
-ln -s ${arduino_srcdir}/hardware/arduino/cores/arduino/*.h \
-   $arduino_includedir 
+# Copy the source files into the build directory.
+cp ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/* \
+   $arduino_localstatedir/${LIBNAME} 
 
 # Copy over the custom make file.
-rm $arduino_localstatedir/Makefile
-cp ${datadir}/Makefile.lib $arduino_localstatedir/Makefile
+rm $arduino_localstatedir/${LIBNAME}/Makefile
+cp ${datadir}/Makefile.lib $arduino_localstatedir/${LIBNAME}/Makefile
 
+
+######## Put headers in the include directory #######
+ln -s ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/*.h \
+   $arduino_includedir 
 
 
 ######### Make the libraries ########
 
-echo "Installing gcc-avr, avr-libc and avrdude if necessary..."
-sudo apt-get -y install gcc-avr avr-libc avrdude
-
-echo "Making libarduino..."
-make -C LIBDIR=${arduino_localstatedir}
+echo "Making lib${LIBNAME}..."
+make -C LIBDIR=${arduino_localstatedir} INCDIR=${arduino_includedir} \
+   HDR=`ls ${arduino_localstatedir}/${LIBNAME}/*.h` \
+   C_SRC=`ls ${arduino_localstatedir}/${LIBNAME}/*.c` \
+   CPP_SRC=`ls ${arduino_localstatedir}/${LIBNAME}/*.cpp` \
 
 
 # Check to make sure it finished successfully.
-if [ -f ${arduino_libdir}/libarduino.a ];
+if [ -f ${arduino_libdir}/lib${LIBNAME}.a ];
 then
    echo
    echo "Success!!"
@@ -94,7 +99,7 @@ then
    exit 0
 else
    echo  
-   echo "Something broke - cannot find libarduino/libarduino.a."
+   echo "Something broke - cannot find ${arduino_libdir}/lib${LIBNAME}.a"
    echo
    exit 1
 fi

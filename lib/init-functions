@@ -16,16 +16,17 @@
 #datadir=${datarootdir}/libarduino
 
 
-datarootdir=../data
 exec_prefix=${prefix}
-libdir=../lib
+#exec_prefix=@prefix@
+libdir=`pwd`/../lib
+#libdir=@libdir@
 localstatedir=${prefix}/lib/libarduino
 #localstatedir=${HOME}/.@PKGNAME@
-datarootdir=../data
+datarootdir=`pwd`/../data
 datadir=${datarootdir}
 
 # Set up file paths for building arduino libs and apps.
-arduino_prefix=./test
+arduino_prefix=`pwd`/test
 #arduino_prefix=${HOME}/.${PKGNAME}
 arduino_libdir=${arduino_prefix}/lib
 arduino_includedir=${arduino_prefix}/include
@@ -58,4 +59,19 @@ relhdrs () {
 
    grep "^#include" $srcfile | cut -d\" -f2 -s
 } # relhdrs
+
+
+#
+# This returns the relative paths of the arduino libraries based
+# on the library name.
+#
+arduino_srcpath () {
+   libname=$1
+
+   if [ "${libname}" = "arduino" ] ; then
+      echo hardware/arduino/cores/arduino;
+   else
+      echo libraries/${libname};
+   fi
+} # arduino_libpath
 
