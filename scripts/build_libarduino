@@ -95,7 +95,7 @@ done
 ######### Make the libraries ########
 
 echo "Making lib${LIBNAME}..."
-make -C LIBDIR=${arduino_localstatedir} INCDIR=${arduino_includedir} \
+make -C INCDIR=${arduino_includedir} \
    HDR=`ls ${arduino_localstatedir}/${LIBNAME}/*.h` \
    C_SRC=`ls ${arduino_localstatedir}/${LIBNAME}/*.c` \
    CPP_SRC=`ls ${arduino_localstatedir}/${LIBNAME}/*.cpp` \
