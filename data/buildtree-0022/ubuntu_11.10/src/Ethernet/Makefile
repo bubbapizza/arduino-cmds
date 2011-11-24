@@ -38,5 +38,5 @@ $(LIB): $(OBJ) $(C_SRC) $(CPP_SRC) $(HDR)
 all: $(LIB)
  
 clean:
-	@rm -rfv *.o
-	@rm -rfv *.a
+	@rm -rfv *.o utility/*.o
+	@rm -rfv $(LIBDIR)/lib$(LIB)*.a 
