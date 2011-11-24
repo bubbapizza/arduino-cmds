@@ -5,7 +5,7 @@
 #
 LIBDIR=../../lib
 INCDIR=../../include
-LIB=arduino
+LIB=Stepper
 
 # Set compiler settings.
 CC=avr-gcc
@@ -25,9 +25,7 @@ CXXFLAGS += -I $(INCDIR)
  
 
 # Set the source files.
-#HDR     := binary.h HardwareSerial.h pins_arduino.h Print.h Stream.h WConstants.h wiring.h wiring_private.h WProgram.h WString.h
-C_SRC   := pins_arduino.c wiring_analog.c wiring_digital.c wiring_shift.c wiring.c wiring_pulse.c WInterrupts.c
-CPP_SRC := HardwareSerial.cpp Tone.cpp WString.cpp  Print.cpp  WMath.cpp
+CPP_SRC := Stepper.cpp
 OBJ := $(C_SRC:.c=.o) $(CPP_SRC:.cpp=.o)
 
 
