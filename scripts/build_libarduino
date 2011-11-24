@@ -68,8 +68,15 @@ fi
 ######## Set up the build directories #########
 
 # Copy the source files into the build directory.
-cp ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/* \
-   $arduino_localstatedir/${LIBNAME} 
+cp -R ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/* \
+   ${arduino_localstatedir}/${LIBNAME} 
+
+# This part is totally fucking retarded but I have to do it becuase
+# some libraries stupidly include files locally without specifying
+# the relative path properly.  Sooo, just in case, lets copy files all 
+# over the fucking place so the compiler picks up include files properly.
+find ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/* \
+   -exec cp {} ${arduino_localstatedir}/${LIBNAME} \;
 
 # Copy over the custom make file.
 rm $arduino_localstatedir/${LIBNAME}/Makefile
@@ -80,25 +87,24 @@ cp ${datadir}/Makefile.lib $arduino_localstatedir/${LIBNAME}/Makefile
 ln -s -f ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/*.h \
    $arduino_includedir 
 
-# This is a total hack to get around the fact that sometimes cpp/c/pde
-# files include files locally that are actually arduino library files.
-inc_files=`relhdrs ${arduino_localstatedir}/${LIBNAME}/*.c \
-   ${arduino_localstatedir}/${LIBNAME}/*.cpp \
-   ${arduino_localstatedir}/${LIBNAME}/*.pde` 
-
-for inc_file in $inc_files ; do
-   cp ${arduino_includedir}/${inc_file} \
-      ${arduino_localstatedir}/${LIBNAME}
-done
+# This is a total brutal hack to get around the fact that sometimes 
+# cpp/c/pde files include files locally that are actually arduino 
+# library files.  This way the library compiles no matter whether
+# it was include like <this> or "this".
+cp ${arduino_includedir}/* ${arduino_localstatedir}/${LIBNAME}
 
 
 ######### Make the libraries ########
 
 echo "Making lib${LIBNAME}..."
-make -C INCDIR=${arduino_includedir} \
-   HDR=`ls ${arduino_localstatedir}/${LIBNAME}/*.h` \
-   C_SRC=`ls ${arduino_localstatedir}/${LIBNAME}/*.c` \
-   CPP_SRC=`ls ${arduino_localstatedir}/${LIBNAME}/*.cpp` \
+cd ${arduino_localstatedir}/${LIBNAME}
+
+C_SRC=`ls *.c`
+CPP_SRC=`ls *.cpp`
+LIB=${LIBNAME}
+INCDIR=${arduino_includedir}
+export C_SRC CPP_SRC LIB INCDIR
+make -e
 
 
 # Check to make sure it finished successfully.

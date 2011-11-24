@@ -17,13 +17,13 @@ MMCU=atmega328p
 MHZ=16
 
 
-CFLAGS  := -Wall -Os
+CFLAGS := -Wall -Os
 CFLAGS += -mmcu=$(MMCU) -DF_CPU=$(MHZ)000000   # Arduino Uno
-CFLAGS  += -I $(INCDIR)
+CFLAGS += -I $(INCDIR)
  
 CXXFLAGS := -Wall -Os
 CXXFLAGS += -mmcu=$(MMCU) -DF_CPU=$(MHZ)000000   # Arduino Uno
-CXXFLAGS += $(INC_DIRS)
+CXXFLAGS += -I $(INCDIR)
  
 
 # Set the source files.
