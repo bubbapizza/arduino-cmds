@@ -17,7 +17,7 @@
  * along with the Arduino SdFat Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include <SdFat.h>
+#include <utility/SdFat.h>
 #include <avr/pgmspace.h>
 #include <WProgram.h>
 //------------------------------------------------------------------------------

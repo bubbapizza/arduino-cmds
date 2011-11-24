@@ -26,7 +26,7 @@ CXXFLAGS += -I $(INCDIR)
 
 # Set the source files.
 #HDR     := binary.h HardwareSerial.h pins_arduino.h Print.h Stream.h WConstants.h wiring.h wiring_private.h WProgram.h WString.h
-CPP_SRC := File.cpp  SD.cpp
+CPP_SRC := File.cpp  SD.cpp utility/Sd2Card.cpp  utility/SdFile.cpp  utility/SdVolume.cpp
 OBJ := $(C_SRC:.c=.o) $(CPP_SRC:.cpp=.o)
 
 
