@@ -24,7 +24,7 @@
 
 #include <inttypes.h>
 
-#include "Stream.h"
+#include <Stream.h>
 
 struct ring_buffer;
 
