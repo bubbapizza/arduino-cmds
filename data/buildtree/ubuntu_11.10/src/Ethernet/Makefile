@@ -26,7 +26,7 @@ CXXFLAGS += -I $(INCDIR)
 
 # Set the source files.
 #HDR     := binary.h HardwareSerial.h pins_arduino.h Print.h Stream.h WConstants.h wiring.h wiring_private.h WProgram.h WString.h
-CPP_SRC := Client.cpp  Ethernet.cpp  Server.cpp  Udp.cpp
+CPP_SRC := Client.cpp  Ethernet.cpp  Server.cpp  Udp.cpp utility/socket.cpp  utility/w5100.cpp
 OBJ := $(C_SRC:.c=.o) $(CPP_SRC:.cpp=.o)
 
 
