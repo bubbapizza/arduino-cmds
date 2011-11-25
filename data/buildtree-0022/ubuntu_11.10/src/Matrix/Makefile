@@ -39,4 +39,4 @@ all: $(LIB)
  
 clean:
 	@rm -rfv *.o
-	@rm -rfv *.a
+	@rm -rfv $(LIBDIR)/lib$(LIB)*.a

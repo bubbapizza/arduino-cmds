@@ -33,9 +33,11 @@ if [ "${PROGRAM}" = "" ] ; then
    exit 1
 fi
 
-# Include some useful functions and all directory paths.
-prefix=.
-. ${libdir}/init-functions
+# Include useful functions and all directory paths.
+prefix=`pwd`/install
+#prefix=@prefix@
+. ../lib/init-functions
+#. @datadir@/@PACKAGE@/init-functions
 
 
 
