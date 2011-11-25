@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# This holds a bunch of functions used by the build routines and all the
+# default directory locations.
+#
+
+exec_prefix=@prefix@
+libdir=@libdir@
+localstatedir=@localstatedir@
+datadir=@datadir@
+
+# Set up file paths for building arduino libs and apps.
+arduino_prefix=@ARDUINO_PREFIX@
+arduino_libdir=${arduino_prefix}/lib
+arduino_logdir=${arduino_prefix}/log
+arduino_includedir=${arduino_prefix}/include
+arduino_srcdir=${arduino_prefix}/src
+
+# The arduino source version this package is based off of.
+ARDUINO_VERSION="0022"
+
+# This should be changed to a function or something that figures out what
+# os version we're running.
+OSVERSION="ubuntu_11.10"
+
+# Here's the list of arduino libraries included with our package.
+ARDUINO_BUILDTREE=${datadir}/buildtree-${ARDUINO_VERSION}/${OSVERSION}
+
+
+#
+# This figures out the absolute path of any give path.
+#
+abspath () {
+   dir=$1
+
+   # Basically, if the path begins with a '/', it's absolute.  Otherwise,
+   # it's relative so tack on the pwd results.
+   case $dir in
+      /*) echo $1 ;;
+      *) echo `pwd`/$1 ;;
+   esac
+} # abspath
+
+
+#
+# This function pulls out all the relative headers in a c/c++/pde file.
+#
+relhdrs () {
+   srcfiles=$*
+
+   grep -s "^#include" $srcfiles | cut -d\" -f2 -s | sort -u
+} # relhdrs
+
+
+#
+# This returns the relative paths of the arduino libraries based
+# on the library name.
+#
+arduino_srcpath () {
+   libname=$1
+
+   if [ "${libname}" = "arduino" ] ; then
+      echo hardware/arduino/cores/arduino;
+   else
+      echo libraries/${libname};
+   fi
+} # arduino_libpath

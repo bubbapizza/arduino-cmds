@@ -1,0 +1,94 @@
+#!/bin/sh
+#
+#        Copyright (C) 2011 Shawn Wilson
+#        shawn@ch2a.ca
+#        
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
+# This script is used for building libarduino.a from the arduino source.
+# The arduino source is included with the libarduino package.
+# 
+
+# PARAMETERS
+LIBS=${1:-"all"}
+
+
+# Include useful functions and all directory paths.
+prefix=@prefix@
+datarootdir=@datarootdir@
+
+. @datadir@/@PACKAGE@/init-functions
+
+
+
+#
+# Set up the directory for cross compiling arduino source code.
+#
+echo
+echo -n "Setting up the arduino build directory..."
+
+cp -rf ${ARDUINO_BUILDTREE} ${arduino_prefix} && \
+   mkdir ${arduino_prefix}/lib ${arduino_prefix}/log
+
+if [ $? -eq 0 ] ; then
+   echo OK
+   echo
+else
+   echo 
+   echo Could not copy directory tree.  Check permissions or path.
+   echo
+fi
+
+
+#
+# Build all the libraries.
+#
+
+
+echo "Building libraries..."
+echo
+
+if [ "${LIBS}" = "all" ] ; then
+   LIBRARIES="`ls ${arduino_prefix}/src`"
+else
+   LIBRARIES=${LIBS}
+fi
+
+
+for LIBNAME in $LIBRARIES ; do
+   echo -n "Making lib${LIBNAME}..."
+   cd ${arduino_prefix}/src/${LIBNAME}
+   make >${arduino_prefix}/log/${LIBNAME}.log \
+      2>${arduino_prefix}/log/${LIBNAME}.err
+
+   # See if the library got built.  If not, back out and show an error.
+   if [ -f ${arduino_libdir}/lib${LIBNAME}.a ] ; then 
+      echo OK
+   else
+      echo
+      echo
+      echo "Could not make library lib${LIBNAME}.a."
+      echo "Check the following log files to troubleshoot :"
+      echo '    ' ${arudino_prefix}/log/${LIBNAME}.log
+      echo '    ' ${arudino_prefix}/log/${LIBNAME}.err
+      echo
+      exit 1
+   fi
+done
+
+echo 
+echo Success!!!
+echo
