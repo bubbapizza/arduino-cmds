@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# This is a config file for the libarduino package.  It contains a 
+# bunch of defaults that can be overridden.
+#
+
+# Uncomment this line to change the default path for building arduino
+# sources.
+#
+# ARDUINO_PREFIX=@ARDUINO_PREFIX@
+

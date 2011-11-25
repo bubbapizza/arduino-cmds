@@ -1,4 +1,4 @@
-AC_INIT(libarduino, 0.1)
+AC_INIT(libarduino, [0.1], [shawn@ch2a.ca])
 AM_INIT_AUTOMAKE
 
 # Allow the user to pass the default arduino build directory.
