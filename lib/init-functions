@@ -18,23 +18,33 @@
 
 exec_prefix=${prefix}
 #exec_prefix=@prefix@
-libdir=`pwd`/../lib
+libdir=${prefix}/lib
 #libdir=@libdir@
 localstatedir=${prefix}/lib/libarduino
 #localstatedir=${HOME}/.@PKGNAME@
-datarootdir=`pwd`/../data
+datarootdir=../data
+#datarootdir=${prefix}/usr
 datadir=${datarootdir}
 
 # Set up file paths for building arduino libs and apps.
 arduino_prefix=`pwd`/test
 #arduino_prefix=${HOME}/.${PKGNAME}
 arduino_libdir=${arduino_prefix}/lib
-arduino_includedir=${arduino_prefix}/include
-arduino_localstatedir=${arduino_prefix}/build
-arduino_srcdir=${arduino_prefix}/src
+arduino_logdir=${arduino_prefix}/log
+#arduino_includedir=${arduino_prefix}/include
+#arduino_localstatedir=${arduino_prefix}/src
+#arduino_srcdir=${arduino_prefix}/src
 
-# The arduino source version included with this package
+# The arduino source version this package is based off of.
 ARDUINO_VERSION="0022"
+
+# This should be changed to a function or something that figures out what
+# os version we're running.
+OSVERSION="ubuntu_11.10"
+
+# Here's the list of arduino libraries included with our package.
+ARDUINO_BUILDTREE=${datadir}/buildtree-${ARDUINO_VERSION}/${OSVERSION}
+
 
 #
 # This figures out the absolute path of any give path.

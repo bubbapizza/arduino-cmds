@@ -27,96 +27,61 @@ LIBNAME=${1:-arduino}
 
 
 # Include useful functions and all directory paths.
-prefix=.
+prefix=`pwd`/install
 #prefix=@prefix@
 . ../lib/init-functions
 #. @datadir@/@PACKAGE@/init-functions
 
 
-# Create the working directories if necessary.
-mkdir -p $arduino_libdir ${arduino_localstatedir}/${LIBNAME} \
-   $arduino_srcdir $arduino_includedir
 
-
-
-########## Set up arduino sources ############
-
-# Check to see if we can use the built-in distro copy of arduino.
-grep --silent -i -e "Ubuntu 11.10" -e "Ubuntu 11.04" /etc/lsb-release
-ARDUINO_PACKAGE=$?
-
-echo "Setting up the arduino source directory..."
+#
+# Set up the directory for cross compiling arduino source code.
+#
 echo
+echo -n "Setting up the arduino build directory..."
 
-# If there's no built-in arduino package in this linux distro, then
-# we have to use the one that's included with this package.
-if [ $ARDUINO_PACKAGE -eq 1 ] ; then
+cp -rf ${ARDUINO_BUILDTREE} ${arduino_prefix} && \
+   mkdir ${arduino_prefix}/lib ${arduino_prefix}/log
 
-   # The arduino sources will have been installed in the data directory
-   # so we just point symlinks to them.
-   ln -s -f ${datadir}/arduino-${ARDUINO_VERSION} ${arduino_srcdir}/arduino
-
+if [ $? -eq 0 ] ; then
+   echo OK
+   echo
 else
-
-   # Since the package is already installed, we just point to the
-   # shared data with symbolic links.
-   ln -s -f /usr/share/arduino ${arduino_srcdir}/arduino
+   echo 
+   echo Could not copy directory tree.  Check permissions or path.
+   echo
 fi
 
 
+#
+# Build all the libraries.
+#
 
-######## Set up the build directories #########
+echo "Building Libraries..."
+echo
+LIBRARIES="`ls ${arduino_prefix}/src`"
 
-# Copy the source files into the build directory.
-cp -R ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/* \
-   ${arduino_localstatedir}/${LIBNAME} 
+for LIBNAME in $LIBRARIES ; do
+   echo -n "Making lib${LIBNAME}..."
+   cd ${arduino_prefix}/src/${LIBNAME}
+   make >${arduino_prefix}/log/${LIBNAME}.log \
+      2>${arduino_prefix}/log/${LIBNAME}.err
 
-# This part is totally fucking retarded but I have to do it becuase
-# some libraries stupidly include files locally without specifying
-# the relative path properly.  Sooo, just in case, lets copy files all 
-# over the fucking place so the compiler picks up include files properly.
-find ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/* \
-   -exec cp {} ${arduino_localstatedir}/${LIBNAME} \;
+   # See if the library got built.  If not, back out and show an error.
+   if [ -f ${arduino_libdir}/lib${LIBNAME}.a ] ; then 
+      echo OK
+   else
+      echo
+      echo
+      echo "Could not make library lib${LIBNAME}.a."
+      echo "Check the following log files to troubleshoot :"
+      echo '    ' ${arudino_prefix}/log/${LIBNAME}.log
+      echo '    ' ${arudino_prefix}/log/${LIBNAME}.err
+      echo
+      exit 1
+   fi
+done
 
-# Copy over the custom make file.
-rm $arduino_localstatedir/${LIBNAME}/Makefile
-cp ${datadir}/Makefile.lib $arduino_localstatedir/${LIBNAME}/Makefile
-
-
-######## Put headers in the include directory #######
-ln -s -f ${arduino_srcdir}/arduino/`arduino_srcpath ${LIBNAME}`/*.h \
-   $arduino_includedir 
-
-# This is a total brutal hack to get around the fact that sometimes 
-# cpp/c/pde files include files locally that are actually arduino 
-# library files.  This way the library compiles no matter whether
-# it was include like <this> or "this".
-cp ${arduino_includedir}/* ${arduino_localstatedir}/${LIBNAME}
-
-
-######### Make the libraries ########
-
-echo "Making lib${LIBNAME}..."
-cd ${arduino_localstatedir}/${LIBNAME}
-
-C_SRC=`ls *.c`
-CPP_SRC=`ls *.cpp`
-LIB=${LIBNAME}
-INCDIR=${arduino_includedir}
-export C_SRC CPP_SRC LIB INCDIR
-make -e
-
-
-# Check to make sure it finished successfully.
-if [ -f ${arduino_libdir}/lib${LIBNAME}.a ];
-then
-   echo
-   echo "Success!!"
-   echo
-   exit 0
-else
-   echo  
-   echo "Something broke - cannot find ${arduino_libdir}/lib${LIBNAME}.a"
-   echo
-   exit 1
-fi
+echo 
+echo Success!!!
+echo
