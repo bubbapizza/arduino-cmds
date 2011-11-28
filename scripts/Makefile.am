@@ -1,1 +1,1 @@
-dist_bin_scripts = build_libarduino
+dist_bin_SCRIPTS = build_libarduino

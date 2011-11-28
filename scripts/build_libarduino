@@ -23,14 +23,14 @@
 # 
 
 # PARAMETERS
-LIBNAME=${1:-arduino}
+LIBS=${1:-"all"}
 
 
 # Include useful functions and all directory paths.
-prefix=`pwd`/install
-#prefix=@prefix@
-. ../lib/init-functions
-#. @datadir@/@PACKAGE@/init-functions
+prefix=/tmp/install
+datarootdir=${prefix}/share
+
+. ${datarootdir}/libarduino/init-functions
 
 
 
@@ -57,9 +57,16 @@ fi
 # Build all the libraries.
 #
 
-echo "Building Libraries..."
+
+echo "Building libraries..."
 echo
-LIBRARIES="`ls ${arduino_prefix}/src`"
+
+if [ "${LIBS}" = "all" ] ; then
+   LIBRARIES="`ls ${arduino_prefix}/src`"
+else
+   LIBRARIES=${LIBS}
+fi
+
 
 for LIBNAME in $LIBRARIES ; do
    echo -n "Making lib${LIBNAME}..."

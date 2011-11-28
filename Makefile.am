@@ -1,1 +1,1 @@
-SUBDIRS = scripts config lib
+SUBDIRS = scripts config lib data

@@ -4,36 +4,22 @@
 # default directory locations.
 #
 
-# These should be the default directories where the libarduino
-# package will get installed to.  The paths here need to be turned
-# into autotools paths.
-#
-#prefix=/usr/local
-#exec_prefix=${prefix}
-#libdir=${exec_prefix}/lib
-#localstatedir=${prefix}/var/lib/libarduino
-#datarootdir=${prefix}/share/libarduino
-#datadir=${datarootdir}/libarduino
-
-
-exec_prefix=${prefix}
-#exec_prefix=@prefix@
-libdir=${prefix}/lib
-#libdir=@libdir@
-localstatedir=${prefix}/lib/libarduino
-#localstatedir=${HOME}/.@PKGNAME@
-datarootdir=../data
-#datarootdir=${prefix}/usr
+exec_prefix=/tmp/install
+libdir=${exec_prefix}/lib
+localstatedir=${prefix}/var
+datarootdir=${prefix}/share
 datadir=${datarootdir}
 
+# Initialize all settings from local config file.
+. ${prefix}/etc/libarduino/${PROCONFIG}-config
+
+
 # Set up file paths for building arduino libs and apps.
-arduino_prefix=`pwd`/test
-#arduino_prefix=${HOME}/.${PKGNAME}
+arduino_prefix=${ARDUINO_PREFIX:-'${HOME}/.libarduino'}
 arduino_libdir=${arduino_prefix}/lib
 arduino_logdir=${arduino_prefix}/log
-#arduino_includedir=${arduino_prefix}/include
-#arduino_localstatedir=${arduino_prefix}/src
-#arduino_srcdir=${arduino_prefix}/src
+arduino_includedir=${arduino_prefix}/include
+arduino_srcdir=${arduino_prefix}/src
 
 # The arduino source version this package is based off of.
 ARDUINO_VERSION="0022"
