@@ -4,7 +4,7 @@
 # default directory locations.
 #
 
-exec_prefix=/tmp/stuff2
+exec_prefix=/tmp/bl
 libdir=${exec_prefix}/lib
 localstatedir=${prefix}/var
 datarootdir=${prefix}/share

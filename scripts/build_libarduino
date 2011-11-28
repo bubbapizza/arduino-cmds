@@ -27,7 +27,7 @@ LIBS=${1:-"all"}
 
 
 # Include useful functions and all directory paths.
-prefix=/tmp/stuff2
+prefix=/tmp/bl
 datarootdir=${prefix}/share
 
 . ${datarootdir}/libarduino/init-functions
