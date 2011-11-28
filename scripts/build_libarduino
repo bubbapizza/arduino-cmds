@@ -27,7 +27,7 @@ LIBS=${1:-"all"}
 
 
 # Include useful functions and all directory paths.
-prefix=/tmp/stuff
+prefix=/tmp/stuff2
 datarootdir=${prefix}/share
 
 . ${datarootdir}/libarduino/init-functions
@@ -40,8 +40,15 @@ datarootdir=${prefix}/share
 echo
 echo -n "Setting up the arduino build directory..."
 
-cp -rf ${ARDUINO_BUILDTREE} ${arduino_prefix} && \
-   mkdir ${arduino_prefix}/lib ${arduino_prefix}/log
+# If the build directory doesn't already exist, then create it, 
+# copy over the arduino sources and make the other necessary
+# subdirectories.
+if [ ! -d ${arduino_prefix} ] ; then
+   mkdir -p ${arduino_prefix}
+   cp -rf ${ARDUINO_BUILDTREE} ${arduino_prefix}
+   mkdir ${arduino_prefix}/lib
+   mkdir ${arduino_prefix}/log
+fi
 
 if [ $? -eq 0 ] ; then
    echo OK
@@ -62,7 +69,7 @@ echo "Building libraries..."
 echo
 
 if [ "${LIBS}" = "all" ] ; then
-   LIBRARIES="`ls ${arduino_prefix}/src`"
+   LIBRARIES="${arduino_prefix}/src/*"
 else
    LIBRARIES=${LIBS}
 fi

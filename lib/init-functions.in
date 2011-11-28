@@ -24,12 +24,8 @@ arduino_srcdir=${arduino_prefix}/src
 # The arduino source version this package is based off of.
 ARDUINO_VERSION="0022"
 
-# This should be changed to a function or something that figures out what
-# os version we're running.
-OSVERSION="ubuntu_11.10"
-
 # Here's the list of arduino libraries included with our package.
-ARDUINO_BUILDTREE=${datadir}/buildtree-${ARDUINO_VERSION}/${OSVERSION}
+ARDUINO_BUILDTREE=${datadir}/buildtree-${ARDUINO_VERSION}
 
 
 #
