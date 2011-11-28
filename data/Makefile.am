@@ -5,7 +5,7 @@
 # the distribution.
 BUILDTREE=buildtree-0022
 $(BUILDTREE).tar.gz:
-	$(TAR) czvf $(BUILDTREE)
+	$(TAR) czvf $(BUILDTREE).tar.gz $(BUILDTREE)
 
 dist_pkgdata_DATA = $(BUILDTREE).tar.gz
 
