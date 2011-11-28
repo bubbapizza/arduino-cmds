@@ -13,7 +13,7 @@ dist_pkgdata_DATA = $(BUILDTREE).tar.gz
 # the data directory.
 install-data-hook:
 	cd $(DESTDIR)$(pkgdatadir); \
-	   $(TAR) --no-same-owner zxvf $(BUILDTREE).tar.gz 
+	   $(TAR) zxvf $(BUILDTREE).tar.gz 
 
 # When uninstalling, blow away the buildtree source we extracted above.
 uninstall-local:
