@@ -4,14 +4,14 @@
 # default directory locations.
 #
 
-exec_prefix=/tmp/install
+exec_prefix=/tmp/stuff
 libdir=${exec_prefix}/lib
 localstatedir=${prefix}/var
 datarootdir=${prefix}/share
 datadir=${datarootdir}
 
 # Initialize all settings from local config file.
-. ${prefix}/etc/libarduino/${PROCONFIG}-config
+. ${prefix}/etc/libarduino/default-config
 
 
 # Set up file paths for building arduino libs and apps.

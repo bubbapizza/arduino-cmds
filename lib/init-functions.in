@@ -11,7 +11,7 @@ datarootdir=@datarootdir@
 datadir=@datadir@
 
 # Initialize all settings from local config file.
-. @sysconfdir@/@PACKAGE@/${PROCONFIG}-config
+. @sysconfdir@/@PACKAGE@/default-config
 
 
 # Set up file paths for building arduino libs and apps.
