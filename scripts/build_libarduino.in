@@ -45,7 +45,7 @@ echo -n "Setting up the arduino build directory..."
 # subdirectories.
 if [ ! -d ${arduino_prefix} ] ; then
    mkdir -p ${arduino_prefix}
-   cp -rf ${ARDUINO_BUILDTREE} ${arduino_prefix}
+   cp -rf ${ARDUINO_BUILDTREE}/* ${arduino_prefix}
    mkdir ${arduino_prefix}/lib
    mkdir ${arduino_prefix}/log
 fi
@@ -69,7 +69,7 @@ echo "Building libraries..."
 echo
 
 if [ "${LIBS}" = "all" ] ; then
-   LIBRARIES="${arduino_prefix}/src/*"
+   LIBRARIES="`ls -m1 ${arduino_prefix}/src`"
 else
    LIBRARIES=${LIBS}
 fi

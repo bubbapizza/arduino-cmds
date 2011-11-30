@@ -4,16 +4,16 @@
 # Zip the contents of the buildtree source into a tarball to go with
 # the distribution.
 BUILDTREE=buildtree-0022
-$(BUILDTREE).tar.gz:
-	$(TAR) czvf $(BUILDTREE).tar.gz $(BUILDTREE)
+$(BUILDTREE).tar:
+	$(TAR) cvf $(BUILDTREE).tar $(BUILDTREE)
 
-dist_pkgdata_DATA = $(BUILDTREE).tar.gz
+dist_pkgdata_DATA = $(BUILDTREE).tar
 
 # On install of the distribution, unpack the buildtree tarball into
 # the data directory.
 install-data-hook:
 	cd $(DESTDIR)$(pkgdatadir); \
-	   $(TAR) zxvf $(BUILDTREE).tar.gz 
+	   $(TAR) xvf $(BUILDTREE).tar
 
 # When uninstalling, blow away the buildtree source we extracted above.
 uninstall-local:

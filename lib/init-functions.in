@@ -8,14 +8,14 @@ exec_prefix=@prefix@
 libdir=@libdir@
 localstatedir=@localstatedir@
 datarootdir=@datarootdir@
-datadir=@datadir@
+datadir=@datadir@/@PACKAGE@
 
 # Initialize all settings from local config file.
 . @sysconfdir@/@PACKAGE@/default-config
 
 
 # Set up file paths for building arduino libs and apps.
-arduino_prefix=${ARDUINO_PREFIX:-'@ARDUINO_PREFIX@'}
+arduino_prefix=${ARDUINO_PREFIX:-"@ARDUINO_PREFIX@"}
 arduino_libdir=${arduino_prefix}/lib
 arduino_logdir=${arduino_prefix}/log
 arduino_includedir=${arduino_prefix}/include
