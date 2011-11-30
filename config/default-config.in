@@ -9,3 +9,8 @@
 #
 # ARDUINO_PREFIX=@ARDUINO_PREFIX@
 
+# Uncomment these lines to change the default avr compiler settings.  By
+# default, the gcc-avr settings compile for the Arduino Uno.
+#
+# MMCU=@MMCU@
+# MHZ=@MHZ@

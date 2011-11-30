@@ -12,12 +12,13 @@ datadir=@datadir@/@PACKAGE@
 
 # Initialize all settings from local config file.
 . @sysconfdir@/@PACKAGE@/default-config
-
+arduino_prefix=${ARDUINO_PREFIX:-"@ARDUINO_PREFIX@"}
+MMCU=${MMCU:-"@MMCU@"}
+MHZ=${MHZ:-"@MHZ@"}
 
 # Set up file paths for building arduino libs and apps.
-arduino_prefix=${ARDUINO_PREFIX:-"@ARDUINO_PREFIX@"}
-arduino_libdir=${arduino_prefix}/lib
-arduino_logdir=${arduino_prefix}/log
+arduino_libdir=${arduino_prefix}/lib/${MMCU}-${MHZ}
+arduino_logdir=${arduino_prefix}/log/${MMCU}-${MHZ}
 arduino_includedir=${arduino_prefix}/include
 arduino_srcdir=${arduino_prefix}/src
 
