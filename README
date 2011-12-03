@@ -3,9 +3,9 @@ automates the building of arduino libraries.
 
 It should do something like run a command that can do things like:
 
-   libarduino --build --mcu=atmega328p --Mhz=16
-   libarduino --build --board-name=uno 
-   libarduino --list-names
+   build_libarduino --board-name=uno [--directory=<install-dir>]
+   build_libarduino --list-boards
+
 
 The latter should list the names of the arduinos in the build.txt file
 showing the names and descriptions of the boards like so: 
@@ -28,30 +28,24 @@ showing the names and descriptions of the boards like so:
  atmega168  : Arduino NG or older w/ ATmega168
  atmega8    : Arduino NG or older w/ ATmega8
 
-By default the command will put the .a files in the directory
-~/libarduino/arduino-<version>-<name>.  For example:
-
-   libarduino --build --board-name=pro328
-   ls ~/libarduino/arduino-0022-pro328
-
-The names and corresponding mcu and Mhz settings should come from a 
-config file in etc/libarduino.conf for further customization.
+The default board name to compile for comes from a config file in 
+etc/libarduino.conf.
 
 ==== future ====
 
 Add a command that lets you compile and upload  pde files straight away 
 without any bullshit.  You should be able to do a command like:
 
-   arduino --run blink.pde
+   arduino-run blink.pde [--tty=/dev/ttyABC123] [--board=<board-name>]
 
 from no matter where you are and it will autocompile and upload the 
 program to your board.  Other options could be:
 
-   arduino --compile blink.pde [--output=filename]
-   arduino --upload blink.hex [--tty=/dev/ttyABC123]
+   arduino-compile blink.pde [--output=filename] [--board=<board-name>]
+   arduino-upload blink.hex [--tty=/dev/ttyABC123] 
 
 
-To do this, there should be an etc/arduino.conf file to find out what 
+To do this, there should be an etc/arduino-cmds file to find out what 
 board name to use.  During autocompilation, it should grep the pde file 
 for include statements and automatically select the right libraries 
 to link against.  The list of available libraries and corresponding 
